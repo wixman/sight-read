@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Sight Read">
+<meta name="theme-color" content="#090D1B">
+<link rel="icon" type="image/svg+xml" href="./icon.svg">
+<link rel="apple-touch-icon" href="./icon.svg">
+<link rel="manifest" href="./manifest.json">
+<title>Sight Read</title>
+<script>try{ const t=localStorage.getItem("sr-theme"); if(t==="light"||t==="dark") document.documentElement.dataset.theme=t; }catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap">
+<link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+
+<!-- ============ Home ============ -->
+<main id="home" class="screen">
+  <header class="top">
+    <div class="brand"><span class="logo" aria-hidden="true"><i></i></span>Sight Read</div>
+    <button class="iconbtn" id="themeBtn" aria-label="Switch light or dark">◐</button>
+  </header>
+
+  <section class="hero">
+    <h1>Read it once.<br>Keep going.</h1>
+    <p>A fresh piece every time. Follow the pulse as it moves through the music. No sound needed.</p>
+    <div class="stats" id="stats"></div>
+  </section>
+
+  <section class="card">
+    <div class="cardhead"><span class="lbl">Level</span><span class="lvname" id="lvName"></span></div>
+    <div class="stepper">
+      <button class="step" id="lvDown" aria-label="Easier level">−</button>
+      <div class="val"><b id="lvNum">1</b><small>of 10</small></div>
+      <button class="step" id="lvUp" aria-label="Harder level">+</button>
+    </div>
+    <div class="ladder" id="ladder" aria-hidden="true"></div>
+  </section>
+
+  <section class="card">
+    <div class="cardhead"><span class="lbl">Tempo</span><button class="link" id="bpmReset" hidden>Level default</button></div>
+    <div class="stepper">
+      <button class="step" id="bpmDown" aria-label="Slower">−</button>
+      <div class="val"><b><span class="q">♩</span> = <span id="bpmNum">60</span></b><small id="bpmHint">beats per minute</small></div>
+      <button class="step" id="bpmUp" aria-label="Faster">+</button>
+    </div>
+  </section>
+
+  <section class="card opts">
+    <div class="cardhead"><span class="lbl">Pulse</span></div>
+    <div class="opt"><span>Count-in</span>
+      <div class="seg" id="countSeg" role="radiogroup" aria-label="Count-in bars"><button data-v="0">Off</button><button data-v="1">1 bar</button><button data-v="2">2 bars</button></div></div>
+    <label class="opt"><span>Fade bars once they're played<small>Keeps your eyes moving forward</small></span><input type="checkbox" id="optFade"><i class="sw"></i></label>
+    <label class="opt"><span>Flash the edges on each beat<small>For your peripheral vision</small></span><input type="checkbox" id="optEdge"><i class="sw"></i></label>
+    <label class="opt" id="vibRow"><span>Buzz on each beat<small>On phones that support it</small></span><input type="checkbox" id="optVib"><i class="sw"></i></label>
+    <label class="opt"><span>Click on each beat<small>Off by default, for when sound is fine</small></span><input type="checkbox" id="optClick"><i class="sw"></i></label>
+  </section>
+
+  <p class="suggest" id="suggest" hidden></p>
+
+  <div class="actions">
+    <button class="btn primary big" id="newRead">New read</button>
+    <label class="btn ghost" for="fileIn">Open a MusicXML file<input type="file" id="fileIn" accept=".xml,.musicxml,.mxl,application/vnd.recordare.musicxml+xml,application/vnd.recordare.musicxml" hidden></label>
+  </div>
+</main>
+
+<!-- ============ Reading ============ -->
+<main id="read" class="screen" hidden>
+  <header class="rtop">
+    <button class="iconbtn" id="backBtn" aria-label="Back">‹</button>
+    <div class="rtitle"><b id="rTitle"></b><small id="rSub"></small></div>
+    <div class="pulse" id="pulseRing" aria-hidden="true"><i></i></div>
+  </header>
+  <div class="beats" id="beats" aria-hidden="true"></div>
+
+  <div class="paper" id="paper">
+    <div class="stage" id="stage">
+      <div id="osmd"></div>
+      <div class="layer" id="layer"></div>
+      <div class="band" id="band"></div>
+      <div class="cur" id="cur"><i></i></div>
+    </div>
+    <div class="msg" id="msg">Drawing the music…</div>
+  </div>
+  <div class="countin" id="countin" aria-live="polite"></div>
+  <div class="edge" id="edge" aria-hidden="true"></div>
+
+  <footer class="rbar">
+    <div class="rhint" id="rHint">Scan it first: key, time signature, rhythms. Then start.</div>
+    <div class="rbtns">
+      <button class="btn" id="restartBtn" aria-label="Start over">↺</button>
+      <button class="btn primary grow" id="goBtn">Start</button>
+    </div>
+  </footer>
+</main>
+
+<!-- ============ After a read ============ -->
+<div class="scrim" id="doneScrim" hidden>
+  <div class="sheet" role="dialog" aria-labelledby="doneH">
+    <h2 id="doneH">How did it go?</h2>
+    <p class="note">Be honest. It decides what comes next.</p>
+    <div class="rate">
+      <button data-r="good"><b>Kept going</b><small>A few slips, never stopped</small></button>
+      <button data-r="ok"><b>Got through it</b><small>Hesitated here and there</small></button>
+      <button data-r="lost"><b>Lost my place</b><small>Fell behind the pulse</small></button>
+    </div>
+    <div class="after" id="after" hidden>
+      <p id="afterMsg"></p>
+      <div class="row">
+        <button class="btn" id="againBtn">Read it again</button>
+        <button class="btn primary" id="nextBtn">Next read</button>
+      </div>
+      <button class="link" id="homeBtn">Back to levels</button>
+    </div>
+  </div>
+</div>
+
+<script src="./generator.js"></script>
+<script src="./app.js"></script>
+</body>
+</html>

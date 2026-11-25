@@ -1,0 +1,13 @@
+{
+  "short_name": "Sight Read",
+  "name": "Sight Read: daily sight reading with a visual pulse",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "theme_color": "#090D1B",
+  "background_color": "#090D1B",
+  "icons": [
+    { "src": "./icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}
