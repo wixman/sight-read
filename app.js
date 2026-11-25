@@ -245,4 +245,8 @@ document.addEventListener("keydown",e=>{ if($("#read").hidden) return; if(e.code
 let rz=0; window.addEventListener("resize",()=>{ clearTimeout(rz); rz=setTimeout(()=>{ if($("#read").hidden||!R.osmd||Math.abs($("#paper").clientWidth-R.width)<30) return; stopRun(); draw(); },250); });
 
 renderHome();
-if("serviceWorker" in navigator&&location.protocol==="https:") navigator.serviceWorker.register("./sw.js").catch(()=>{});
+/* Offline worker. When a new version takes over, reload once so the page and its styles always match. */
+if("serviceWorker" in navigator&&(location.protocol==="https:"||location.hostname==="localhost")){
+  const had=!!navigator.serviceWorker.controller; let reloaded=false;
+  navigator.serviceWorker.addEventListener("controllerchange",()=>{ if(had&&!reloaded&&R.phase!=="play"&&R.phase!=="count"){ reloaded=true; location.reload(); } });
+  navigator.serviceWorker.register("./sw.js",{updateViaCache:"none"}).then(r=>r.update()).catch(()=>{}); }
