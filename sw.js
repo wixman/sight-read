@@ -1,5 +1,5 @@
 /* Offline support: serve from cache, refresh the cache in the background. */
-const CACHE="sight-read-v1";
+const CACHE="sight-read-v2";
 const CORE=["./","./index.html","./styles.css","./generator.js","./app.js","./manifest.json","./icon.svg",
   "https://cdn.jsdelivr.net/npm/opensheetmusicdisplay@1.8.9/build/opensheetmusicdisplay.min.js"];
 self.addEventListener("install",e=>{ e.waitUntil(caches.open(CACHE).then(c=>c.addAll(CORE)).catch(()=>{})); self.skipWaiting(); });
